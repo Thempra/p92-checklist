@@ -14,7 +14,7 @@ class P92ChecklistApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Checklist P92',
+      title: 'Checklist',
       debugShowCheckedModeBanner: false,
       theme: buildAppTheme(),
       home: const ChecklistScreen(),

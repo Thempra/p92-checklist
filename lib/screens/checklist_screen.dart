@@ -3,15 +3,17 @@ import 'package:flutter/material.dart';
 import '../data/checklist_data.dart';
 import '../state/checklist_store.dart';
 import '../theme/app_theme.dart';
-import '../widgets/checklist_tile.dart';
-import '../widgets/progress_bar.dart';
+import '../widgets/block_view.dart';
+import '../widgets/step_indicator.dart';
 import '../widgets/takeoff_gate.dart';
 
-/// Main checklist screen.
+/// Main checklist screen: a multi-screen flow, one page per flight block.
 ///
-/// Owns the [ChecklistStore] (state lifted to the top of this screen) and
-/// renders the full aircraft checklist grouped by block, a progress bar and
-/// the take-off gate pinned to the bottom.
+/// A [StepIndicator] on top always tells the pilot where they are (current
+/// block highlighted) and which blocks they've already completed (green
+/// check). A [PageView] (cached, so every step keeps its state) holds the
+/// blocks, and the take-off gate at the bottom stays locked until every item
+/// across all blocks is checked.
 class ChecklistScreen extends StatefulWidget {
   const ChecklistScreen({super.key});
 
@@ -21,6 +23,8 @@ class ChecklistScreen extends StatefulWidget {
 
 class _ChecklistScreenState extends State<ChecklistScreen> {
   final ChecklistStore _store = ChecklistStore();
+  final PageController _pageController = PageController();
+  int _current = 0;
 
   @override
   void initState() {
@@ -31,7 +35,17 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
   @override
   void dispose() {
     _store.dispose();
+    _pageController.dispose();
     super.dispose();
+  }
+
+  void _goTo(int index) {
+    setState(() => _current = index);
+    _pageController.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 280),
+      curve: Curves.easeOut,
+    );
   }
 
   void _reset() {
@@ -51,10 +65,7 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
               _store.reset();
               Navigator.of(ctx).pop();
             },
-            child: const Text(
-              'Reiniciar',
-              style: TextStyle(color: AppColors.danger),
-            ),
+            child: const Text('Reiniciar', style: TextStyle(color: AppColors.danger)),
           ),
         ],
       ),
@@ -65,7 +76,7 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('CHECKLIST PRE-VUELO'),
+        title: const Text('CHECKLIST'),
         actions: [
           IconButton(
             tooltip: 'Reiniciar checklist',
@@ -76,32 +87,37 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
       ),
       body: ListenableBuilder(
         listenable: _store,
-        builder: (context, _) {
-          return Column(
-            children: [
-              _FrequenciesHeader(),
-              ProgressBar(progress: _store.progress),
-              Expanded(
-                child: ListView(
-                  padding: const EdgeInsets.fromLTRB(10, 4, 10, 20),
-                  children: [
-                    for (final group in kAircraft)
-                      ChecklistTile.group(
-                        title: group.title,
-                        store: _store,
-                        items: group.items,
-                      ),
-                  ],
+        builder: (context, _) => Column(
+          children: [
+            const _FrequenciesHeader(),
+            StepIndicator(
+              store: _store,
+              currentIndex: _current,
+              onStepTap: _goTo,
+            ),
+            Expanded(
+              child: PageView.builder(
+                controller: _pageController,
+                itemCount: kAircraft.length,
+                onPageChanged: (i) => setState(() => _current = i),
+                itemBuilder: (context, index) => BlockView(
+                  group: kAircraft[index],
+                  store: _store,
+                  isFirst: index == 0,
+                  isLast: index == kAircraft.length - 1,
+                  onPrev: index > 0 ? () => _goTo(index - 1) : null,
+                  onNext: index < kAircraft.length - 1
+                      ? () => _goTo(index + 1)
+                      : null,
                 ),
               ),
-            ],
-          );
-        },
+            ),
+          ],
+        ),
       ),
       bottomNavigationBar: ListenableBuilder(
         listenable: _store,
-        builder: (context, _) =>
-            TakeoffGate(store: _store),
+        builder: (context, _) => TakeoffGate(store: _store, onGoToBlock: _goTo),
       ),
     );
   }
@@ -110,6 +126,8 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
 /// Small frequency reference taken from the checklist header, always visible
 /// so the pilot never has to scroll to confirm radio frequencies.
 class _FrequenciesHeader extends StatelessWidget {
+  const _FrequenciesHeader();
+
   @override
   Widget build(BuildContext context) {
     return Container(

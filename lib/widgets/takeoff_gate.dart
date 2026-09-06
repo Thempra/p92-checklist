@@ -13,8 +13,9 @@ import '../theme/app_theme.dart';
 /// the action, so the pilot knows exactly how close they are.
 class TakeoffGate extends StatelessWidget {
   final ChecklistStore store;
+  final ValueChanged<int>? onGoToBlock;
 
-  const TakeoffGate({super.key, required this.store});
+  const TakeoffGate({super.key, required this.store, this.onGoToBlock});
 
   @override
   Widget build(BuildContext context) {
@@ -85,6 +86,14 @@ class TakeoffGate extends StatelessWidget {
               letterSpacing: 1,
             ),
           ),
+          if (pending > 0 && onGoToBlock != null) ...[
+            const SizedBox(width: 12),
+            IconButton(
+              tooltip: 'Ir al bloque con pendientes',
+              onPressed: () => onGoToBlock!(store.firstPendingBlockIndex),
+              icon: const Icon(Icons.arrow_forward, color: Colors.white70),
+            ),
+          ],
         ],
       ),
     );

@@ -9,6 +9,8 @@ import '../models/checklist_item.dart';
 const List<ChecklistGroup> kAircraft = [
   ChecklistGroup(
     title: 'REVISIÓN EXTERIOR',
+    shortTitle: 'Exterior',
+    step: 1,
     items: [
       ChecklistItem(
           id: 'ext_tanques',
@@ -65,6 +67,8 @@ const List<ChecklistGroup> kAircraft = [
   ),
   ChecklistGroup(
     title: 'PUESTA EN MARCHA',
+    shortTitle: 'Arranque',
+    step: 2,
     items: [
       ChecklistItem(id: 'pem_cinturones', label: 'CINTURONES', note: 'AJUSTAR'),
       ChecklistItem(
@@ -110,6 +114,8 @@ const List<ChecklistGroup> kAircraft = [
   ),
   ChecklistGroup(
     title: 'RODAJE',
+    shortTitle: 'Rodaje',
+    step: 3,
     items: [
       ChecklistItem(id: 'rod_parking_off', label: 'FRENO PARKING', note: 'OFF'),
       ChecklistItem(id: 'rod_frenos', label: 'FRENOS', note: 'CHK'),
@@ -151,6 +157,8 @@ const List<ChecklistGroup> kAircraft = [
   ),
   ChecklistGroup(
     title: 'ASCENSO',
+    shortTitle: 'Ascenso',
+    step: 4,
     items: [
       ChecklistItem(id: 'asc_flaps', label: 'FLAPS (Vy / Vx)', note: '0 / 15°'),
       ChecklistItem(id: 'asc_vy_vx', label: 'Vy / Vx', note: '120 / 100'),
@@ -167,6 +175,8 @@ const List<ChecklistGroup> kAircraft = [
   ),
   ChecklistGroup(
     title: 'EN FINAL',
+    shortTitle: 'Final',
+    step: 5,
     items: [
       ChecklistItem(id: 'fin_landing_on', label: 'LUZ LANDING', note: 'ON'),
       ChecklistItem(id: 'fin_bomba_on', label: 'BOMBA DE COMBUSTIBLE', note: 'ON'),
@@ -176,6 +186,8 @@ const List<ChecklistGroup> kAircraft = [
   ),
   ChecklistGroup(
     title: 'PARADA DE MOTOR',
+    shortTitle: 'Parada',
+    step: 6,
     items: [
       ChecklistItem(id: 'par_flaps_limpio', label: 'FLAPS (OBSERVAR)', note: 'LIMPIO'),
       ChecklistItem(
@@ -201,6 +213,8 @@ const List<ChecklistGroup> kAircraft = [
   ),
   ChecklistGroup(
     title: 'NORMAL (POST-VUELO)',
+    shortTitle: 'Post-vuelo',
+    step: 7,
     items: [
       ChecklistItem(id: 'nor_param_motor', label: 'PARÁMETROS MOTOR'),
       ChecklistItem(id: 'nor_pres_aceite', label: 'PRES. ACEITE', note: '0,8 - MAX 7'),

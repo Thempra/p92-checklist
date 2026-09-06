@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../data/checklist_data.dart';
+import '../models/checklist_group.dart';
 import '../models/checklist_item.dart';
 
 /// Central application state for the checklist.
@@ -34,6 +35,32 @@ class ChecklistStore extends ChangeNotifier {
   /// Items still pending (not checked) across all groups.
   List<ChecklistItem> get pendingItems =>
       kAllCheckableItems().where((i) => !isChecked(i.id)).toList();
+
+
+  /// Total checkable items in a given group.
+  int groupTotal(ChecklistGroup group) => group.checkableCount;
+
+  /// Number of checked items in a given group.
+  int groupCompleted(ChecklistGroup group) =>
+      group.items.where((i) => !i.isHeader && isChecked(i.id)).length;
+
+  /// Items of a group still pending (not checked).
+  List<ChecklistItem> groupPending(ChecklistGroup group) =>
+      group.items
+          .where((i) => !i.isHeader && !isChecked(i.id))
+          .toList();
+
+
+  /// Index (into `kAircraft`) of the first block that still has pending
+  /// items, or -1 if everything is complete.
+  int get firstPendingBlockIndex {
+    for (var i = 0; i < kAircraft.length; i++) {
+      if (groupCompleted(kAircraft[i]) < kAircraft[i].checkableCount) {
+        return i;
+      }
+    }
+    return -1;
+  }
 
   void toggle(String id) {
     _checked[id] = !(_checked[id] ?? false);

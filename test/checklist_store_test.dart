@@ -51,5 +51,24 @@ void main() {
       expect(store.completedCount, 0);
       expect(store.isComplete, isFalse);
     });
+
+    test('groupCompleted tracks per-block progress', () {
+      final store = ChecklistStore();
+      final firstBlock = kAircraft.first;
+      final firstItem = firstBlock.items.firstWhere((i) => !i.isHeader);
+      store.setChecked(firstItem.id, true);
+      expect(store.groupCompleted(firstBlock), 1);
+      expect(store.firstPendingBlockIndex, 0,
+          reason: 'first block still has pending items');
+    });
+
+    test('firstPendingBlockIndex points to the first incomplete block', () {
+      final store = ChecklistStore();
+      // Complete the first block fully.
+      for (final i in kAircraft.first.items) {
+        if (!i.isHeader) store.setChecked(i.id, true);
+      }
+      expect(store.firstPendingBlockIndex, 1);
+    });
   });
 }

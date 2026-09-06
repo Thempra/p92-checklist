@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <linearGradient id="body" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFFFFF"/>
+      <stop offset="1" stop-color="#E4E0D8"/>
+    </linearGradient>
+    <linearGradient id="wing" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0FA17F"/>
+      <stop offset="1" stop-color="#0C8A6D"/>
+    </linearGradient>
+  </defs>
+
+  <!-- horizontal stabilizer -->
+  <rect x="690" y="470" width="170" height="16" rx="8" fill="#0C8A6D"/>
+
+  <!-- vertical stabilizer / rudder -->
+  <path d="M700,485 L700,360 Q700,340 722,340 L770,340 Q790,430 800,485 Z" fill="#0C8A6D"/>
+
+  <!-- fuselage (side, pointing right - nose at x~940) -->
+  <path d="M150,560
+           Q170,520 260,505
+           Q560,470 640,495
+           Q760,515 800,540
+           Q900,555 960,552
+           Q990,552 990,560
+           Q990,568 900,575
+           Q700,600 460,600
+           Q210,600 150,580
+           Z"
+        fill="url(#body)" stroke="#0C8A6D" stroke-width="4"/>
+
+  <!-- cockpit window -->
+  <path d="M520,508 Q620,498 700,510 L700,552 Q600,540 530,545 Z" fill="#9FD8C7" opacity="0.75"/>
+
+  <!-- main landing gear strut (under wing) -->
+  <line x1="600" y1="600" x2="610" y2="820" stroke="#2A2A2A" stroke-width="12"/>
+  <ellipse cx="616" cy="830" rx="46" ry="30" fill="#2A2A2A"/>
+
+  <!-- nose landing gear -->
+  <line x1="880" y1="578" x2="900" y2="816" stroke="#2A2A2A" stroke-width="10"/>
+  <ellipse cx="905" cy="824" rx="34" ry="24" fill="#2A2A2A"/>
+
+  <!-- wing (high wing above fuselage) -->
+  <path d="M420,470 Q520,400 720,420 Q760,425 760,440 Q760,455 640,470 Q520,490 435,485 Z"
+        fill="url(#wing)" stroke="#0A755C" stroke-width="3"/>
+
+  <!-- engine cowling / spinner at nose -->
+  <circle cx="972" cy="560" r="30" fill="#2A2A2A"/>
+  <circle cx="972" cy="560" r="22" fill="#3A3A3A" stroke="#0C8A6D" stroke-width="3"/>
+  <!-- propeller blades -->
+  <ellipse cx="978" cy="532" rx="9" ry="40" fill="#1F1F1F" transform="rotate(-25 978 545)"/>
+  <ellipse cx="996" cy="586" rx="9" ry="40" fill="#1F1F1F" transform="rotate(20 996 572)"/>
+  <circle cx="985" cy="560" r="8" fill="#0C8A6D"/>
+
+  <!-- registration on fuselage -->
+  <text x="400" y="578" font-family="DejaVu Sans, Arial, sans-serif" font-weight="bold"
+        font-size="42" fill="#0C8A6D" letter-spacing="2">EC-DG4</text>
+</svg>

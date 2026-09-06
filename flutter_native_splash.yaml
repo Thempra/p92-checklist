@@ -1,0 +1,9 @@
+flutter_native_splash:
+  color: "#F5F2EE"
+  image: assets/p92_icon.png
+  android: true
+  ios: false
+  web: false
+  android_12:
+    color: "#F5F2EE"
+    image: assets/p92_icon.png
