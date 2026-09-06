@@ -5,8 +5,8 @@ import '../services/metar_service.dart';
 /// Holds the live METAR / altimeter (QNH) value for the nearest airport,
 /// fetching it once on startup.
 ///
-/// Exposed as a [ChangeNotifier] so widgets (the marquee bar and the
-/// ALTÍMETRO checklist item) can request and observe the value.
+/// Exposed as a [ChangeNotifier] so widgets (the ALTÍMETRO checklist item)
+/// can request and observe the value.
 class MetarNotifier extends ChangeNotifier {
   final MetarService _service;
   AltimeterResult? _result;

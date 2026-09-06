@@ -9,7 +9,8 @@ import '../theme/app_theme.dart';
 /// the label + optional note (e.g. "15°", "ON") on the right.
 ///
 /// The ALTÍMETRO item gets a special treatment: its note shows the live
-/// altimeter (QNH) fetched from the nearest airport, e.g. "LEBT 1023 hPa".
+/// altimeter (QNH) fetched from the nearest airport, e.g. "LEBT 1023 hPa",
+/// but only when a real value is available — otherwise nothing is shown.
 class ItemRow extends StatelessWidget {
   final ChecklistItem item;
   final ChecklistStore store;
@@ -87,8 +88,9 @@ class ItemRow extends StatelessWidget {
   }
 }
 
-/// Note for the ALTÍMETRO row: shows the live QNH once loaded, a spinner
-/// while fetching, or the default value on failure.
+/// Note for the ALTÍMETRO row: shows the live QNH once a real value is
+/// fetched. While loading, or on failure, nothing is rendered (so the row
+/// keeps the same height and clean look).
 class _AltimeterNote extends StatelessWidget {
   final MetarNotifier metar;
   final bool checked;
@@ -100,36 +102,22 @@ class _AltimeterNote extends StatelessWidget {
     return ListenableBuilder(
       listenable: metar,
       builder: (context, _) {
-        final Widget child;
-        if (metar.result != null) {
-          final showFallback = !metar.result!.fromLive;
-          child = Text(
-            metar.result!.display,
-            style: TextStyle(
-              fontSize: 12.5,
-              fontWeight: FontWeight.w700,
-              color: checked
-                  ? AppColors.accent
-                  : (showFallback ? AppColors.warning : AppColors.textMuted),
-            ),
-          );
-        } else if (metar.isLoading) {
-          child = const SizedBox(
-            width: 14,
-            height: 14,
-            child: CircularProgressIndicator(strokeWidth: 2),
-          );
-        } else {
-          child = Text(
-            'Consultando METAR…',
+        final result = metar.result;
+        // Only show a value when it came from a real live METAR fetch.
+        if (result == null || !result.fromLive) {
+          return const SizedBox.shrink();
+        }
+        return Padding(
+          padding: const EdgeInsets.only(top: 2),
+          child: Text(
+            result.display,
             style: TextStyle(
               fontSize: 12.5,
               fontWeight: FontWeight.w700,
               color: checked ? AppColors.accent : AppColors.textMuted,
             ),
-          );
-        }
-        return Padding(padding: const EdgeInsets.only(top: 2), child: child);
+          ),
+        );
       },
     );
   }

@@ -5,7 +5,6 @@ import '../state/checklist_store.dart';
 import '../state/metar_notifier.dart';
 import '../theme/app_theme.dart';
 import '../widgets/block_view.dart';
-import '../widgets/metar_bar.dart';
 import '../widgets/step_indicator.dart';
 import '../widgets/takeoff_gate.dart';
 
@@ -95,7 +94,6 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
         listenable: _store,
         builder: (context, _) => Column(
           children: [
-            MetarBar(metar: _metar),
             StepIndicator(
               store: _store,
               currentIndex: _current,
