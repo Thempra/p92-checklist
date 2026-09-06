@@ -7,60 +7,64 @@ import '../models/checklist_item.dart';
 
 /// Central application state for the checklist.
 ///
-/// Holds the set of checked item ids, persists them across launches and
-/// exposes the logic that gates the "DESPEGAR" action on every item being
-/// completed.
+/// Holds the checked item ids, persists them across launches, and implements
+/// the two-phase flight flow:
+///
+///  * **Pre-take-off**: take-off ("DESPEGAR") unlocks once every item in
+///    blocks 1–7 (Exterior → Ascenso) is complete. Authorising take-off
+///    flags the flight as airborne and moves into the landing phase.
+///  * **Landing**: the gate now reads "ATERRIZADO" and unlocks once every
+///    item across all blocks (including EN FINAL and PARADA DE MOTOR) is done.
 class ChecklistStore extends ChangeNotifier {
-  /// item id -> whether it is checked.
   final Map<String, bool> _checked = {};
-
   bool _isReady = false;
+  bool _tookOff = false;
 
-  /// True once loaded state has been restored from disk.
   bool get isReady => _isReady;
+
+  /// True once the pilot has authorized take-off (blocks 1–7 done).
+  bool get hasTakenOff => _tookOff;
 
   bool isChecked(String id) => _checked[id] ?? false;
 
-  /// Number of currently checked checkable items.
   int get completedCount =>
       kAllCheckableItems().where((i) => isChecked(i.id)).length;
+
+  /// Number of checkable items in the pre-take-off blocks (1–7).
+  int get _preTakeoffTotal => kAircraft
+      .take(kTakeoffLastBlockIndex + 1)
+      .fold<int>(0, (sum, g) => sum + g.checkableCount);
+
+  /// Whether every item in the take-off gating blocks (1–7) is complete.
+  bool get preTakeoffComplete {
+    final done = kAircraft
+        .take(kTakeoffLastBlockIndex + 1)
+        .fold<int>(0, (sum, g) => sum + groupCompleted(g));
+    return done >= _preTakeoffTotal;
+  }
 
   /// Whether every single checkable item has been completed.
   bool get isComplete => completedCount >= kTotalCheckableItems;
 
-  /// Fraction of completion, 0.0..1.0.
+  /// Fraction of completion over all blocks, 0.0..1.0.
   double get progress =>
       kTotalCheckableItems == 0 ? 0 : completedCount / kTotalCheckableItems;
+
+  /// Number of checkable items completed in a given group.
+  int groupCompleted(ChecklistGroup group) =>
+      group.items.where((i) => !i.isHeader && isChecked(i.id)).length;
+
+  /// Index (into [kAircraft]) of the first incomplete block.
+  int get firstPendingBlockIndex {
+    for (var i = 0; i < kAircraft.length; i++) {
+      if (groupCompleted(kAircraft[i]) < kAircraft[i].checkableCount) return i;
+    }
+    return 0;
+  }
 
   /// Items still pending (not checked) across all groups.
   List<ChecklistItem> get pendingItems =>
       kAllCheckableItems().where((i) => !isChecked(i.id)).toList();
-
-
-  /// Total checkable items in a given group.
-  int groupTotal(ChecklistGroup group) => group.checkableCount;
-
-  /// Number of checked items in a given group.
-  int groupCompleted(ChecklistGroup group) =>
-      group.items.where((i) => !i.isHeader && isChecked(i.id)).length;
-
-  /// Items of a group still pending (not checked).
-  List<ChecklistItem> groupPending(ChecklistGroup group) =>
-      group.items
-          .where((i) => !i.isHeader && !isChecked(i.id))
-          .toList();
-
-
-  /// Index (into `kAircraft`) of the first block that still has pending
-  /// items, or -1 if everything is complete.
-  int get firstPendingBlockIndex {
-    for (var i = 0; i < kAircraft.length; i++) {
-      if (groupCompleted(kAircraft[i]) < kAircraft[i].checkableCount) {
-        return i;
-      }
-    }
-    return -1;
-  }
 
   void toggle(String id) {
     _checked[id] = !(_checked[id] ?? false);
@@ -75,8 +79,16 @@ class ChecklistStore extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Authorizes take-off: locks the pre-take-off phase and moves to landing.
+  void authorizeTakeoff() {
+    _tookOff = true;
+    _persist();
+    notifyListeners();
+  }
+
   void reset() {
     _checked.clear();
+    _tookOff = false;
     _persist();
     notifyListeners();
   }
@@ -85,9 +97,11 @@ class ChecklistStore extends ChangeNotifier {
     try {
       final prefs = await SharedPreferences.getInstance();
       final saved = prefs.getStringList('checked_ids') ?? const [];
+      final tookOff = prefs.getBool('took_off') ?? false;
       _checked
         ..clear()
         ..addEntries(saved.map((id) => MapEntry(id, true)));
+      _tookOff = tookOff;
     } catch (_) {
       // On failure start fresh rather than crash.
     }
@@ -96,11 +110,11 @@ class ChecklistStore extends ChangeNotifier {
   }
 
   void _persist() {
-    // Fire-and-forget: persistence must never block the UI.
     Future(() async {
       try {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setStringList('checked_ids', _checked.keys.toList());
+        await prefs.setBool('took_off', _tookOff);
       } catch (_) {
         // Best-effort persistence.
       }

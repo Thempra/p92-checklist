@@ -4,9 +4,11 @@ import '../models/checklist_item.dart';
 /// Full pre-flight / post-flight checklist for the Tecnam P92 Echo (EC-DG4),
 /// transcribed from the aircraft's operational checklist document.
 ///
-/// Items are ordered top-to-bottom per block, exactly as the pilot flows
-/// through them. Header items render as group labels inside a block.
+/// Grouped into the 9 flight blocks the pilot steps through. Section headers
+/// (e.g. "PARTE DE MORRO") render as blue bars exactly like the source
+/// document.
 const List<ChecklistGroup> kAircraft = [
+  // ─── 1 · REVISIÓN EXTERIOR (PARTE DE MORRO) ───────────────────────────
   ChecklistGroup(
     title: 'REVISIÓN EXTERIOR',
     shortTitle: 'Exterior',
@@ -35,6 +37,14 @@ const List<ChecklistGroup> kAircraft = [
           note: 'CHK'),
       ChecklistItem(id: 'ext_escapes', label: 'SUJECIÓN DE ESCAPES', note: 'CHK'),
       ChecklistItem(id: 'ext_gomas', label: 'GOMAS Y TUBERÍAS', note: 'CHK'),
+    ],
+  ),
+  // ─── 2 · PLANO IZQUIERDO, COLA, PLANO DERECHO ─────────────────────────
+  ChecklistGroup(
+    title: 'REVISIÓN EXTERIOR · PLANOS Y COLA',
+    shortTitle: 'Planos',
+    step: 2,
+    items: [
       ChecklistItem(id: 'ext_izq_hdr', label: 'PLANO IZQUIERDO', isHeader: true),
       ChecklistItem(id: 'ext_tren_izq', label: 'TREN PRINCIPAL', note: 'CHK'),
       ChecklistItem(id: 'ext_borde_izq', label: 'BORDE DE ATAQUE', note: 'CHK'),
@@ -65,10 +75,11 @@ const List<ChecklistGroup> kAircraft = [
       ChecklistItem(id: 'ext_estatica_der', label: 'TOMA ESTÁTICA', note: 'CHK'),
     ],
   ),
+  // ─── 3 · PUESTA EN MARCHA ─────────────────────────────────────────────
   ChecklistGroup(
     title: 'PUESTA EN MARCHA',
     shortTitle: 'Arranque',
-    step: 2,
+    step: 3,
     items: [
       ChecklistItem(id: 'pem_cinturones', label: 'CINTURONES', note: 'AJUSTAR'),
       ChecklistItem(
@@ -89,10 +100,14 @@ const List<ChecklistGroup> kAircraft = [
       ChecklistItem(id: 'pem_arrancar', label: 'SI LIBRE', note: 'ARRANCAR'),
       ChecklistItem(id: 'pem_pres_aceite', label: 'PRESIÓN DE ACEITE'),
       ChecklistItem(id: 'pem_starter_off', label: 'STARTER', note: 'OFF'),
-      ChecklistItem(
-          id: 'pem_after_hdr',
-          label: 'DESPUÉS DE ARRANCAR',
-          isHeader: true),
+    ],
+  ),
+  // ─── 4 · DESPUÉS DE ARRANCAR ──────────────────────────────────────────
+  ChecklistGroup(
+    title: 'DESPUÉS DE ARRANCAR',
+    shortTitle: 'Post-arranque',
+    step: 4,
+    items: [
       ChecklistItem(id: 'pem_param_motor', label: 'PARÁMETROS MOTOR', note: 'CHK'),
       ChecklistItem(
           id: 'pem_rpm_ralenti',
@@ -112,10 +127,11 @@ const List<ChecklistGroup> kAircraft = [
       ChecklistItem(id: 'pem_radio', label: 'RADIO'),
     ],
   ),
+  // ─── 5 · RODAJE · PRUEBA DE MOTOR ─────────────────────────────────────
   ChecklistGroup(
-    title: 'RODAJE',
+    title: 'RODAJE · PRUEBA DE MOTOR',
     shortTitle: 'Rodaje',
-    step: 3,
+    step: 5,
     items: [
       ChecklistItem(id: 'rod_parking_off', label: 'FRENO PARKING', note: 'OFF'),
       ChecklistItem(id: 'rod_frenos', label: 'FRENOS', note: 'CHK'),
@@ -132,7 +148,16 @@ const List<ChecklistGroup> kAircraft = [
           note: '≤ 120'),
       ChecklistItem(id: 'rod_param_verde2', label: 'PARÁMETROS MOTOR', note: 'VERDE'),
       ChecklistItem(id: 'rod_ralenti', label: 'RALENTÍ'),
-      ChecklistItem(id: 'rod_ant_hdr', label: 'ANTES DE DESPEGAR', isHeader: true),
+      ChecklistItem(id: 'rod_final_hdr', label: 'FINAL Y MANGA', isHeader: true),
+      ChecklistItem(id: 'rod_final_obs', label: 'FINAL Y MANGA', note: 'OBSERVAR'),
+    ],
+  ),
+  // ─── 6 · ANTES DE DESPEGAR ────────────────────────────────────────────
+  ChecklistGroup(
+    title: 'ANTES DE DESPEGAR',
+    shortTitle: 'Pre-despegue',
+    step: 6,
+    items: [
       ChecklistItem(id: 'rod_flaps15', label: 'FLAPS (OBSERVAR)', note: '15°'),
       ChecklistItem(id: 'rod_mandos', label: 'MANDOS', note: 'LIBRES'),
       ChecklistItem(id: 'rod_compensador', label: 'COMPENSADOR', note: 'NEUTRO'),
@@ -148,17 +173,13 @@ const List<ChecklistGroup> kAircraft = [
           note: 'CHK'),
       ChecklistItem(id: 'rod_puertas', label: 'PUERTAS Y PESTILLOS', note: 'CHK'),
       ChecklistItem(id: 'rod_parking_ant', label: 'FRENO DE PARKING', note: 'OFF'),
-      ChecklistItem(
-          id: 'rod_final_hdr',
-          label: 'FINAL Y MANGA',
-          isHeader: true),
-      ChecklistItem(id: 'rod_final_obs', label: 'FINAL Y MANGA', note: 'OBSERVAR'),
     ],
   ),
+  // ─── 7 · ASCENSO (> 500 PIES AGL) ─────────────────────────────────────
   ChecklistGroup(
     title: 'ASCENSO',
     shortTitle: 'Ascenso',
-    step: 4,
+    step: 7,
     items: [
       ChecklistItem(id: 'asc_flaps', label: 'FLAPS (Vy / Vx)', note: '0 / 15°'),
       ChecklistItem(id: 'asc_vy_vx', label: 'Vy / Vx', note: '120 / 100'),
@@ -173,10 +194,11 @@ const List<ChecklistGroup> kAircraft = [
       ChecklistItem(id: 'asc_param_verde', label: 'PARÁMETROS MOTOR', note: 'VERDE'),
     ],
   ),
+  // ─── 8 · EN FINAL ─────────────────────────────────────────────────────
   ChecklistGroup(
     title: 'EN FINAL',
     shortTitle: 'Final',
-    step: 5,
+    step: 8,
     items: [
       ChecklistItem(id: 'fin_landing_on', label: 'LUZ LANDING', note: 'ON'),
       ChecklistItem(id: 'fin_bomba_on', label: 'BOMBA DE COMBUSTIBLE', note: 'ON'),
@@ -184,10 +206,11 @@ const List<ChecklistGroup> kAircraft = [
       ChecklistItem(id: 'fin_velocidad', label: 'VELOCIDAD', note: '0 - FULL'),
     ],
   ),
+  // ─── 9 · PARADA DE MOTOR ──────────────────────────────────────────────
   ChecklistGroup(
     title: 'PARADA DE MOTOR',
     shortTitle: 'Parada',
-    step: 6,
+    step: 9,
     items: [
       ChecklistItem(id: 'par_flaps_limpio', label: 'FLAPS (OBSERVAR)', note: 'LIMPIO'),
       ChecklistItem(
@@ -211,33 +234,25 @@ const List<ChecklistGroup> kAircraft = [
           note: 'CHK'),
     ],
   ),
-  ChecklistGroup(
-    title: 'NORMAL (POST-VUELO)',
-    shortTitle: 'Post-vuelo',
-    step: 7,
-    items: [
-      ChecklistItem(id: 'nor_param_motor', label: 'PARÁMETROS MOTOR'),
-      ChecklistItem(id: 'nor_pres_aceite', label: 'PRES. ACEITE', note: '0,8 - MAX 7'),
-      ChecklistItem(id: 'nor_temp_aceite', label: 'TEMP. ACEITE', note: 'MIN 50° - MAX 130°'),
-      ChecklistItem(
-          id: 'nor_pres_comb',
-          label: 'PRES. COMBUSTIBLE',
-          note: '2 - 5 BAR'),
-      ChecklistItem(id: 'nor_chts', label: 'CHT (CULTIVAS)', note: '0,15 - 0,4'),
-      ChecklistItem(
-          id: 'nor_egt',
-          label: 'EGT (GASES)',
-          note: '600° - 800°'),
-      ChecklistItem(
-          id: 'nor_voltimetro',
-          label: 'VOLTMETRO',
-          note: '12 - 14 VOLT'),
-    ],
-  ),
 ];
 
+/// Normal engine operating parameters shown in the "PARÁMETROS DE MOTOR"
+/// help modal (reference values, not checkable items).
+const List<(String, String)> kMotorParameters = [
+  ('PRES. ACEITE', '0,8 – MAX 7'),
+  ('TEMP. ACEITE', 'MIN 50° – MAX 130°'),
+  ('PRES. COMBUSTIBLE', '2 – 5 BAR'),
+  ('CHT (CULTIVAS)', '0,15 – 0,4'),
+  ('EGT (GASES)', '600° – 800°'),
+  ('VOLTMETRO', '12 – 14 VOLT'),
+];
+
+/// Index (into [kAircraft]) of the first block that gates take-off (inclusive).
+/// DESPEGAR unlocks once blocks 1..7 are complete; block 8 (EN FINAL) is the
+/// post-take-off landing phase.
+const int kTakeoffLastBlockIndex = 6; // 0-based index of block 7 (ASCENSO)
+
 /// Flattened list of every checkable item across all groups, in order.
-/// Used to compute overall progress.
 List<ChecklistItem> kAllCheckableItems() {
   final items = <ChecklistItem>[];
   for (final g in kAircraft) {

@@ -12,8 +12,9 @@ import '../widgets/takeoff_gate.dart';
 /// A [StepIndicator] on top always tells the pilot where they are (current
 /// block highlighted) and which blocks they've already completed (green
 /// check). A [PageView] (cached, so every step keeps its state) holds the
-/// blocks, and the take-off gate at the bottom stays locked until every item
-/// across all blocks is checked.
+/// blocks. The flight gate at the bottom is locked until the pre-take-off
+/// phase (blocks 1–7) is complete, then unlocks DESPEGAR and switches to
+/// ATERRIZADO for the landing phase.
 class ChecklistScreen extends StatefulWidget {
   const ChecklistScreen({super.key});
 
@@ -103,12 +104,6 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
                 itemBuilder: (context, index) => BlockView(
                   group: kAircraft[index],
                   store: _store,
-                  isFirst: index == 0,
-                  isLast: index == kAircraft.length - 1,
-                  onPrev: index > 0 ? () => _goTo(index - 1) : null,
-                  onNext: index < kAircraft.length - 1
-                      ? () => _goTo(index + 1)
-                      : null,
                 ),
               ),
             ),

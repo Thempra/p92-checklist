@@ -5,26 +5,16 @@ import '../state/checklist_store.dart';
 import '../theme/app_theme.dart';
 import 'item_row.dart';
 
-/// Renders a single checklist block (one page of the multi-screen flow):
-/// its title, a small per-block progress line, all of its items, and
-/// prev/next navigation buttons.
+/// Renders a single checklist block as a full page of the multi-screen flow.
+///
+/// Each block is independently scrollable so long lists (e.g. Exterior with
+/// 24+ items) can be fully checked. Sub-section headers (e.g. "PARTE DE
+/// MORRO") render as blue bars mirroring the source document.
 class BlockView extends StatelessWidget {
   final ChecklistGroup group;
   final ChecklistStore store;
-  final bool isFirst;
-  final bool isLast;
-  final VoidCallback? onPrev;
-  final VoidCallback? onNext;
 
-  const BlockView({
-    super.key,
-    required this.group,
-    required this.store,
-    required this.isFirst,
-    required this.isLast,
-    this.onPrev,
-    this.onNext,
-  });
+  const BlockView({super.key, required this.group, required this.store});
 
   @override
   Widget build(BuildContext context) {
@@ -32,13 +22,13 @@ class BlockView extends StatelessWidget {
     final done = store.groupCompleted(group);
     final fraction = total == 0 ? 0.0 : done / total;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        // Block header: number + title
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 2),
-          child: Row(
+    return SingleChildScrollView(
+      padding: const EdgeInsets.fromLTRB(12, 10, 12, 24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // Block header: number + title
+          Row(
             children: [
               Container(
                 width: 34,
@@ -71,11 +61,9 @@ class BlockView extends StatelessWidget {
               ),
             ],
           ),
-        ),
-        // per-block progress bar
-        Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-          child: Row(
+          const SizedBox(height: 6),
+          // per-block progress bar
+          Row(
             children: [
               Expanded(
                 child: ClipRRect(
@@ -99,17 +87,16 @@ class BlockView extends StatelessWidget {
               ),
             ],
           ),
-        ),
-        // items card
-        Expanded(
-          child: Card(
-            margin: const EdgeInsets.fromLTRB(10, 6, 10, 8),
+          const SizedBox(height: 10),
+          // items card
+          Card(
+            margin: EdgeInsets.zero,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 for (var i = 0; i < group.items.length; i++) ...[
                   if (group.items[i].isHeader)
-                    _SubHeaderRow(label: group.items[i].label)
+                    _SectionBar(label: group.items[i].label)
                   else
                     ItemRow(item: group.items[i], store: store),
                   if (i < group.items.length - 1 && !group.items[i].isHeader)
@@ -119,60 +106,31 @@ class BlockView extends StatelessWidget {
               ],
             ),
           ),
-        ),
-        // navigation
-        Padding(
-          padding: const EdgeInsets.fromLTRB(12, 2, 12, 8),
-          child: Row(
-            children: [
-              if (!isFirst)
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: onPrev,
-                    icon: const Icon(Icons.arrow_back),
-                    label: const Text('ANTERIOR'),
-                    style: OutlinedButton.styleFrom(
-                      foregroundColor: AppColors.accentDark,
-                      side: const BorderSide(color: AppColors.accent),
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                    ),
-                  ),
-                ),
-              if (!isFirst && !isLast) const SizedBox(width: 10),
-              if (!isLast)
-                Expanded(
-                  child: FilledButton(
-                    onPressed: onNext,
-                    style: FilledButton.styleFrom(
-                      backgroundColor: AppColors.accent,
-                      padding: const EdgeInsets.symmetric(vertical: 14),
-                    ),
-                    child: const Text('SIGUIENTE ›'),
-                  ),
-                ),
-            ],
-          ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 }
 
-class _SubHeaderRow extends StatelessWidget {
+/// A sub-section header rendered as a blue bar with the section's label,
+/// mirroring how the source document groups items under blue backgrounds.
+class _SectionBar extends StatelessWidget {
   final String label;
-  const _SubHeaderRow({required this.label});
+  const _SectionBar({required this.label});
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 10, 16, 2),
+    return Container(
+      width: double.infinity,
+      color: const Color(0xFF3A6B8A), // deep aviation blue
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
       child: Text(
         label,
         style: const TextStyle(
-          color: AppColors.accentDark,
-          fontWeight: FontWeight.w700,
-          fontSize: 12.5,
-          letterSpacing: 0.3,
+          color: Colors.white,
+          fontWeight: FontWeight.w800,
+          fontSize: 13,
+          letterSpacing: 0.6,
         ),
       ),
     );

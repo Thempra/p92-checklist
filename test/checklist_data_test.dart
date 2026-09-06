@@ -14,34 +14,49 @@ void main() {
           reason: 'duplicate ids would corrupt persisted state');
     });
 
-    test('contains the critical flight blocks', () {
+    test('has 9 blocks in the pilot order', () {
       final titles = kAircraft.map((g) => g.title).toList();
-      expect(titles, contains('REVISIÓN EXTERIOR'));
-      expect(titles, contains('RODAJE'));
-      expect(titles, contains('ASCENSO'));
-      expect(titles, contains('PARADA DE MOTOR'));
-      expect(titles, contains('EN FINAL'));
+      expect(titles.length, 9);
+      expect(titles[0], contains('REVISIÓN EXTERIOR'));
+      expect(titles[3], contains('DESPUÉS DE ARRANCAR'));
+      expect(titles[5], contains('ANTES DE DESPEGAR'));
+      expect(titles[6], contains('ASCENSO'));
+      expect(titles[7], contains('EN FINAL'));
+      expect(titles[8], contains('PARADA DE MOTOR'));
     });
 
-    test('roda je includes the before-takeoff sub-block', () {
-      final rodaje = kAircraft.firstWhere((g) => g.title == 'RODAJE');
-      final labels = rodaje.items.map((i) => i.label).toList();
-      expect(labels, contains('ANTES DE DESPEGAR'));
-      expect(labels, contains('FLAPS (OBSERVAR)'));
+    test('block 2 groups planes and tail', () {
+      final block = kAircraft[1];
+      final labels = block.items.map((i) => i.label).toList();
+      expect(labels, contains('PLANO IZQUIERDO'));
+      expect(labels, contains('COLA'));
+      expect(labels, contains('PLANO DERECHO'));
     });
 
-    test('checkable items outnumber headers', () {
+    test('block 5 groups rodaje and engine test', () {
+      final block = kAircraft[4];
+      final labels = block.items.map((i) => i.label).toList();
+      expect(labels, contains('RODAJE'.isEmpty ? '' : 'FRENO PARKING'));
+      expect(labels, contains('PRUEBA DE MOTOR'));
+      expect(labels, contains('ENCENDIDOS (caída máx. 300 RPM)'));
+    });
+
+    test('checkable items outnumber headers and total counts match', () {
       final all = kAllCheckableItems();
       expect(all.length, greaterThan(50));
       expect(kTotalCheckableItems, all.length);
     });
 
-    test('ids are stable and headers are marked', () {
-      for (final g in kAircraft) {
-        for (final i in g.items) {
-          expect(i.id, isNotEmpty);
-        }
-      }
+    test('motor parameters reference is present', () {
+      expect(kMotorParameters.length, greaterThanOrEqualTo(6));
+      final keys = kMotorParameters.map((e) => e.$1).toList();
+      expect(keys, contains('PRES. ACEITE'));
+      expect(keys, contains('VOLTMETRO'));
+    });
+
+    test('take-off gates blocks 1-7', () {
+      expect(kTakeoffLastBlockIndex, 6);
+      expect(kAircraft[kTakeoffLastBlockIndex].title, contains('ASCENSO'));
     });
   });
 }

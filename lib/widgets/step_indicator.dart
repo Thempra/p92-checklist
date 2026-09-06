@@ -5,12 +5,11 @@ import '../models/checklist_group.dart';
 import '../state/checklist_store.dart';
 import '../theme/app_theme.dart';
 
-/// Horizontal step indicator, one circle per checklist block.
+/// Horizontal step indicator, one small dot per checklist block (9 total).
 ///
-/// The current block is highlighted in green with a filled ring; completed
-/// blocks show a green check; pending (untouched) blocks stay grey. The
-/// pilot always sees where they are and how far they've come. Tapping a
-/// completed or adjacent block jumps to it.
+/// The current block is highlighted in green; completed blocks show a green
+/// fill; pending (untouched) blocks stay grey. The pilot always sees where
+/// they are and how far they've come. Tapping a dot jumps to that block.
 class StepIndicator extends StatelessWidget {
   final ChecklistStore store;
   final int currentIndex;
@@ -27,7 +26,7 @@ class StepIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: AppColors.surface,
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 8),
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
       child: Row(
         children: [
           for (var i = 0; i < kAircraft.length; i++) ...[
@@ -45,10 +44,8 @@ class StepIndicator extends StatelessWidget {
     );
   }
 
-  bool _isDone(int index) {
-    final g = kAircraft[index];
-    return store.groupCompleted(g) >= g.checkableCount;
-  }
+  bool _isDone(int index) => store.groupCompleted(kAircraft[index]) >=
+      kAircraft[index].checkableCount;
 }
 
 class _StepDot extends StatelessWidget {
@@ -72,25 +69,20 @@ class _StepDot extends StatelessWidget {
     final anyChecked = store.groupCompleted(group) > 0;
 
     Color bg;
-    Color fg;
     if (done) {
       bg = AppColors.accent;
-      fg = Colors.white;
     } else if (current) {
       bg = AppColors.accent;
-      fg = Colors.white;
     } else if (anyChecked) {
       bg = AppColors.accent.withOpacity(0.18);
-      fg = AppColors.accentDark;
     } else {
       bg = const Color(0xFFE3E0DA);
-      fg = const Color(0xFF8A877F);
     }
 
-    // Current block gets a ring + slightly bigger circle.
-    final size = current ? 46.0 : 38.0;
+    final size = current ? 34.0 : 26.0;
     return Tooltip(
-      message: '${group.title} (${store.groupCompleted(group)}/${group.checkableCount})',
+      message:
+          '${group.title} (${store.groupCompleted(group)}/${group.checkableCount})',
       child: GestureDetector(
         onTap: onTap,
         child: Container(
@@ -100,26 +92,17 @@ class _StepDot extends StatelessWidget {
             color: bg,
             shape: BoxShape.circle,
             border: current
-                ? Border.all(color: AppColors.accentDark, width: 3)
-                : null,
-            boxShadow: current
-                ? [
-                    BoxShadow(
-                      color: AppColors.accent.withOpacity(0.35),
-                      blurRadius: 8,
-                      offset: const Offset(0, 2),
-                    )
-                  ]
+                ? Border.all(color: AppColors.accentDark, width: 2.5)
                 : null,
           ),
           alignment: Alignment.center,
           child: done
-              ? const Icon(Icons.check, color: Colors.white, size: 20)
+              ? const Icon(Icons.check, color: Colors.white, size: 15)
               : Text(
                   '${index + 1}',
                   style: TextStyle(
-                    color: fg,
-                    fontSize: current ? 20 : 15,
+                    color: done || current ? Colors.white : const Color(0xFF8A877F),
+                    fontSize: current ? 15 : 11,
                     fontWeight: FontWeight.w800,
                   ),
                 ),
@@ -129,18 +112,15 @@ class _StepDot extends StatelessWidget {
   }
 }
 
-/// Line linking two adjacent step dots; green when all of the left block's
-/// items are done, otherwise grey.
 class _Connector extends StatelessWidget {
   final bool done;
-
   const _Connector({required this.done});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       height: 3,
-      margin: const EdgeInsets.symmetric(horizontal: 4),
+      margin: const EdgeInsets.symmetric(horizontal: 3),
       decoration: BoxDecoration(
         color: done ? AppColors.accent : const Color(0xFFDDDAD4),
         borderRadius: BorderRadius.circular(2),
