@@ -2,15 +2,25 @@ import 'package:flutter/material.dart';
 
 import '../models/checklist_item.dart';
 import '../state/checklist_store.dart';
+import '../state/metar_notifier.dart';
 import '../theme/app_theme.dart';
 
 /// A single checkable row: large tap target with a checkbox on the left and
 /// the label + optional note (e.g. "15°", "ON") on the right.
+///
+/// The ALTÍMETRO item gets a special treatment: its note shows the live
+/// altimeter (QNH) fetched from the nearest airport, e.g. "LEBT 1023 hPa".
 class ItemRow extends StatelessWidget {
   final ChecklistItem item;
   final ChecklistStore store;
+  final MetarNotifier metar;
 
-  const ItemRow({super.key, required this.item, required this.store});
+  const ItemRow({
+    super.key,
+    required this.item,
+    required this.store,
+    required this.metar,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -34,8 +44,9 @@ class ItemRow extends StatelessWidget {
                   width: 2,
                 ),
               ),
-              child:
-                  checked ? const Icon(Icons.check, size: 16, color: Colors.white) : null,
+              child: checked
+                  ? const Icon(Icons.check, size: 16, color: Colors.white)
+                  : null,
             ),
             Expanded(
               child: Column(
@@ -51,7 +62,9 @@ class ItemRow extends StatelessWidget {
                       decorationColor: AppColors.accent,
                     ),
                   ),
-                  if (item.note != null)
+                  if (item.id == 'pem_altimetro')
+                    _AltimeterNote(metar: metar, checked: checked)
+                  else if (item.note != null)
                     Padding(
                       padding: const EdgeInsets.only(top: 2),
                       child: Text(
@@ -59,7 +72,8 @@ class ItemRow extends StatelessWidget {
                         style: TextStyle(
                           fontSize: 12.5,
                           fontWeight: FontWeight.w700,
-                          color: checked ? AppColors.accent : AppColors.textMuted,
+                          color:
+                              checked ? AppColors.accent : AppColors.textMuted,
                         ),
                       ),
                     ),
@@ -69,6 +83,54 @@ class ItemRow extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// Note for the ALTÍMETRO row: shows the live QNH once loaded, a spinner
+/// while fetching, or the default value on failure.
+class _AltimeterNote extends StatelessWidget {
+  final MetarNotifier metar;
+  final bool checked;
+
+  const _AltimeterNote({required this.metar, required this.checked});
+
+  @override
+  Widget build(BuildContext context) {
+    return ListenableBuilder(
+      listenable: metar,
+      builder: (context, _) {
+        final Widget child;
+        if (metar.result != null) {
+          final showFallback = !metar.result!.fromLive;
+          child = Text(
+            metar.result!.display,
+            style: TextStyle(
+              fontSize: 12.5,
+              fontWeight: FontWeight.w700,
+              color: checked
+                  ? AppColors.accent
+                  : (showFallback ? AppColors.warning : AppColors.textMuted),
+            ),
+          );
+        } else if (metar.isLoading) {
+          child = const SizedBox(
+            width: 14,
+            height: 14,
+            child: CircularProgressIndicator(strokeWidth: 2),
+          );
+        } else {
+          child = Text(
+            'Consultando METAR…',
+            style: TextStyle(
+              fontSize: 12.5,
+              fontWeight: FontWeight.w700,
+              color: checked ? AppColors.accent : AppColors.textMuted,
+            ),
+          );
+        }
+        return Padding(padding: const EdgeInsets.only(top: 2), child: child);
+      },
     );
   }
 }

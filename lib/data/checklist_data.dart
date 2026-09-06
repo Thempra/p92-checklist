@@ -41,7 +41,7 @@ const List<ChecklistGroup> kAircraft = [
   ),
   // ─── 2 · PLANO IZQUIERDO, COLA, PLANO DERECHO ─────────────────────────
   ChecklistGroup(
-    title: 'REVISIÓN EXTERIOR · PLANOS Y COLA',
+    title: 'REVISIÓN EXT. · PLANOS Y COLA',
     shortTitle: 'Planos',
     step: 2,
     items: [
@@ -124,7 +124,10 @@ const List<ChecklistGroup> kAircraft = [
           note: 'ON'),
       ChecklistItem(id: 'pem_altimetro', label: 'ALTÍMETRO', note: 'AJUSTAR'),
       ChecklistItem(id: 'pem_gps', label: 'GPS', note: 'CHK'),
-      ChecklistItem(id: 'pem_radio', label: 'RADIO'),
+      ChecklistItem(
+          id: 'pem_radio',
+          label: 'RADIO',
+          note: 'OLOCAU 130,125 · BÉTERA 126,750 · VALENCIA 120,100'),
     ],
   ),
   // ─── 5 · RODAJE · PRUEBA DE MOTOR ─────────────────────────────────────

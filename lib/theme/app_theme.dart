@@ -13,6 +13,7 @@ class AppColors {
   static const Color textPrimary = Color(0xFF1F2A24);
   static const Color textMuted = Color(0xFF6B7A72);
   static const Color danger = Color(0xFFC63B3B);
+  static const Color warning = Color(0xFFC98A1B);
   static const Color headerBar = Color(0xFF1F2A24); // casi negro
 }
 

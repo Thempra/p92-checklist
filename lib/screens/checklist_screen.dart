@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 
 import '../data/checklist_data.dart';
 import '../state/checklist_store.dart';
+import '../state/metar_notifier.dart';
 import '../theme/app_theme.dart';
 import '../widgets/block_view.dart';
+import '../widgets/metar_bar.dart';
 import '../widgets/step_indicator.dart';
 import '../widgets/takeoff_gate.dart';
 
@@ -24,6 +26,7 @@ class ChecklistScreen extends StatefulWidget {
 
 class _ChecklistScreenState extends State<ChecklistScreen> {
   final ChecklistStore _store = ChecklistStore();
+  final MetarNotifier _metar = MetarNotifier();
   final PageController _pageController = PageController();
   int _current = 0;
 
@@ -31,11 +34,13 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
   void initState() {
     super.initState();
     _store.load();
+    _metar.ensureLoaded();
   }
 
   @override
   void dispose() {
     _store.dispose();
+    _metar.dispose();
     _pageController.dispose();
     super.dispose();
   }
@@ -90,7 +95,7 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
         listenable: _store,
         builder: (context, _) => Column(
           children: [
-            const _FrequenciesHeader(),
+            MetarBar(metar: _metar),
             StepIndicator(
               store: _store,
               currentIndex: _current,
@@ -104,6 +109,7 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
                 itemBuilder: (context, index) => BlockView(
                   group: kAircraft[index],
                   store: _store,
+                  metar: _metar,
                 ),
               ),
             ),
@@ -113,33 +119,6 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
       bottomNavigationBar: ListenableBuilder(
         listenable: _store,
         builder: (context, _) => TakeoffGate(store: _store, onGoToBlock: _goTo),
-      ),
-    );
-  }
-}
-
-/// Small frequency reference taken from the checklist header, always visible
-/// so the pilot never has to scroll to confirm radio frequencies.
-class _FrequenciesHeader extends StatelessWidget {
-  const _FrequenciesHeader();
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      color: AppColors.background,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-      child: const Row(
-        children: [
-          Icon(Icons.radio, size: 16, color: AppColors.accent),
-          SizedBox(width: 6),
-          Expanded(
-            child: Text(
-              'Olocau 130,125 · Bétera 126,750 · Valencia 120,100',
-              style: TextStyle(fontSize: 12, color: AppColors.textMuted),
-            ),
-          ),
-        ],
       ),
     );
   }
