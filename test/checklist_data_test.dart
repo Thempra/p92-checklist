@@ -20,7 +20,7 @@ void main() {
       expect(titles[0], contains('REVISIÓN EXTERIOR'));
       expect(titles[3], contains('DESPUÉS DE ARRANCAR'));
       expect(titles[5], contains('ANTES DE DESPEGAR'));
-      expect(titles[6], contains('ASCENSO'));
+      expect(titles[6], contains('BRIEFING'));
       expect(titles[7], contains('EN FINAL'));
       expect(titles[8], contains('PARADA DE MOTOR'));
     });
@@ -47,6 +47,14 @@ void main() {
       expect(kTotalCheckableItems, all.length);
     });
 
+    test('block 7 is BRIEFING with ASCENSO blue header and plan item', () {
+      final block = kAircraft[6];
+      final labels = block.items.map((i) => i.label).toList();
+      final headers = block.items.where((i) => i.isHeader).map((i) => i.label).toList();
+      expect(labels, contains('CANTAR PLAN EN CASO DE FALLO'));
+      expect(headers, contains('ASCENSO'));
+    });
+
     test('motor parameters reference is present', () {
       expect(kMotorParameters.length, greaterThanOrEqualTo(6));
       final keys = kMotorParameters.map((e) => e.$1).toList();
@@ -56,7 +64,7 @@ void main() {
 
     test('take-off gates blocks 1-7', () {
       expect(kTakeoffLastBlockIndex, 6);
-      expect(kAircraft[kTakeoffLastBlockIndex].title, contains('ASCENSO'));
+      expect(kAircraft[kTakeoffLastBlockIndex].title, contains('BRIEFING'));
     });
   });
 }

@@ -17,15 +17,20 @@ import '../widgets/takeoff_gate.dart';
 /// phase (blocks 1–7) is complete, then unlocks DESPEGAR and switches to
 /// ATERRIZADO for the landing phase.
 class ChecklistScreen extends StatefulWidget {
-  const ChecklistScreen({super.key});
+  const ChecklistScreen({super.key, this.store, this.metar});
+
+  /// Optional injected store/notifier (used by tests). When null, the screen
+  /// creates and owns its own.
+  final ChecklistStore? store;
+  final MetarNotifier? metar;
 
   @override
   State<ChecklistScreen> createState() => _ChecklistScreenState();
 }
 
 class _ChecklistScreenState extends State<ChecklistScreen> {
-  final ChecklistStore _store = ChecklistStore();
-  final MetarNotifier _metar = MetarNotifier();
+  late final ChecklistStore _store = widget.store ?? ChecklistStore();
+  late final MetarNotifier _metar = widget.metar ?? MetarNotifier();
   final PageController _pageController = PageController();
   int _current = 0;
 
@@ -38,8 +43,8 @@ class _ChecklistScreenState extends State<ChecklistScreen> {
 
   @override
   void dispose() {
-    _store.dispose();
-    _metar.dispose();
+    if (widget.store == null) _store.dispose();
+    if (widget.metar == null) _metar.dispose();
     _pageController.dispose();
     super.dispose();
   }

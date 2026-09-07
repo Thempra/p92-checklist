@@ -50,7 +50,7 @@ const List<ChecklistGroup> kAircraft = [
       ChecklistItem(id: 'ext_borde_izq', label: 'BORDE DE ATAQUE', note: 'CHK'),
       ChecklistItem(
           id: 'ext_pito_izq',
-          label: 'TUBO PITO Y TOMA ESTÁTICA',
+          label: 'TUBO PITOT Y TOMA ESTÁTICA',
           note: 'CHK'),
       ChecklistItem(id: 'ext_aleron_izq', label: 'ALERÓN (estado y bisagras)'),
       ChecklistItem(id: 'ext_flap_izq', label: 'FLAP (estado y bisagras)', note: 'CHK'),
@@ -178,12 +178,15 @@ const List<ChecklistGroup> kAircraft = [
       ChecklistItem(id: 'rod_parking_ant', label: 'FRENO DE PARKING', note: 'OFF'),
     ],
   ),
-  // ─── 7 · ASCENSO (> 500 PIES AGL) ─────────────────────────────────────
+  // ─── 7 · BRIEFING (cantar plan + ASCENSO) ──────────────────────────────
   ChecklistGroup(
-    title: 'ASCENSO',
-    shortTitle: 'Ascenso',
+    title: 'BRIEFING',
+    shortTitle: 'Briefing',
     step: 7,
     items: [
+      ChecklistItem(
+          id: 'asc_plan_fallo', label: 'CANTAR PLAN EN CASO DE FALLO'),
+      ChecklistItem(id: 'asc_sep', label: 'ASCENSO', isHeader: true),
       ChecklistItem(id: 'asc_flaps', label: 'FLAPS (Vy / Vx)', note: '0 / 15°'),
       ChecklistItem(id: 'asc_vy_vx', label: 'Vy / Vx', note: '120 / 100'),
       ChecklistItem(

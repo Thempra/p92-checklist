@@ -1,71 +1,129 @@
-# Checklist Pre-Vuelo — Tecnam P92 Echo (EC-DG4)
+# Tecnam P92 Echo — Pre-flight Checklist (EC-DG4)
 
-Aplicación Flutter de checklist operativo para la fase previa y posterior al
-vuelo del Tecnam P92 Echo, transcrito fielmente del dossier de la
-Organización de Formación ULR.
+A **Flutter** mobile checklist app for the pre- and post-flight phases of the
+**Tecnam P92 Echo** (registration EC-DG4), faithfully transcribed from the
+ULR (ultralight) training organisation dossier. Built for the pilot in the
+cockpit: large tap targets, section-by-section navigation, and a hard
+take-off gate that enforces the cardinal rule of the operation.
 
-## Regla principal
+> **The one hard rule:** *You are not allowed to take off until the whole
+> checklist is checked.*
 
-> **No se permite despegar hasta que esté checado TODO el checklist.**
+The app enforces this with a **take-off gate** pinned to the bottom of the
+screen: while any item remains unchecked, the **DESPEGAR** (take off) button
+stays locked and shows how many items are still pending. The flight only
+advances to the landing phase once every pre-take-off item — across blocks
+1–7 — is complete.
 
-La app refleja esta regla con un **gate de despegue** fijo en la parte inferior:
-mientras quede cualquier elemento sin marcar, el botón DESPEGAR permanece
-bloqueado y muestra cuántos elementos faltan. Al completarlo todo, se activa un
-botón verde de autorización de despegue.
+![Main checklist screen](test/screenshots/checklist_main.png)
 
-## Características
+> 📹 [Watch the app demo video](docs/app_demo.mp4) — walk through the flight flow.
 
-- Checklist completo por bloques: Revisión exterior, Puesta en marcha, Rodaje,
-  Ascenso, En final, Parada de motor, Normal (post-vuelo).
-- Marcado por bloque con cabeceras de sección y notas de acción (ON/OFF/CHK/15°…).
-- Barra de progreso global con porcentaje.
-- Frecuencias de radio (Olocau, Bétera, Valencia) siempre visibles en cabecera.
-- **Persistencia**: el progreso se guarda localmente entre sesiones.
-- Botón de reinicio con confirmación.
-- **9 tests unitarios** que verifican la integridad de los datos y la lógica
-  del gate de despegue.
 
-## Arquitectura
+---
 
-Separación por capas para testabilidad y buenas prácticas:
+## Highlights
+
+- **9 flight blocks** transcribed from the dossier, driven by a single
+  source-of-truth data file (`lib/data/checklist_data.dart`).
+- **Multi-page flow** (one screen per block) with a top **step indicator**
+  and a progress bar — no prev/next buttons, so every block keeps its full
+  vertical space for the items.
+- **Hard take-off gate**: locked DESPEGAR until blocks 1–7 are done; then a
+  two-phase gate that switches to **ATERRIZADO** (landed) for the landing
+  phase.
+- **Live altimeter (QNH)** pulled from the nearest reachable airport's real
+  **METAR**, shown inline in the ALTÍMETRO item ("LEBT 1021 hPa").
+  Fail-closed: no value is shown if no live data is available.
+- **Local persistence** — progress survives app restarts.
+- **Reset with confirmation**, an engine-parameters reference modal, and a
+  jump-to-first-pending shortcut.
+- **20 automated tests** (data integrity, gate logic, METAR parsing).
+
+---
+
+## Tech stack
+
+| Area        | Choice                                                              |
+|-------------|---------------------------------------------------------------------|
+| Framework   | Flutter (Dart)                                                      |
+| Target      | Android (APK release build)                                         |
+| State       | `ChangeNotifier` + `ListenableBuilder` (no external state lib)      |
+| Persistence | `shared_preferences`                                                |
+| Networking  | `package:http` → public **[VATSIM METAR](https://metar.vatsim.net)** endpoint |
+| Testing     | `flutter_test` + `http/testing` (mocked HTTP)                       |
+
+---
+
+## Quick start
+
+```bash
+# Get dependencies
+flutter pub get
+
+# Run on a connected device / emulator
+flutter run
+
+# Analyse, test, and build the release APK
+flutter analyze
+flutter test
+flutter build apk --release
+```
+
+The release APK is written to
+`build/app/outputs/flutter-apk/app-release.apk`.
+
+---
+
+## Documentation
+
+For the full picture, see the in-depth guides under [`docs/`](docs/):
+
+| Document                                  | Covers |
+|-------------------------------------------|--------|
+| [**Overview & Goal**](docs/overview.md)    | Purpose, pilot use-case, product goals |
+| [**Architecture**](docs/architecture.md)  | Folder layout, layers, data flow, state, screens |
+| [**Flight data model**](docs/data.md)      | The 9 blocks, items, headers, notes, checklist structure |
+| [**Live METAR / altimeter**](docs/metar.md)| How the QNH is fetched, fallback logic, API used |
+| [**UI & theming**](docs/ui.md)             | Screens, widgets, the cream/green design system |
+| [**Testing**](docs/testing.md)             | What is tested and how |
+
+---
+
+## Project structure
 
 ```
 lib/
-  data/       checklist_data.dart   — checklist completo (fuente de verdad)
-  models/     checklist_item.dart, checklist_group.dart — modelo de dominio
-  state/      checklist_store.dart  — estado (ChangeNotifier) + lógica del gate
-  theme/      app_theme.dart        — paleta crema #F5F2EE + acento verde #0C8A6D
-  widgets/    checklist_tile, progress_bar, takeoff_gate — UI reutilizable
-  screens/    checklist_screen.dart — pantalla principal
+  main.dart                      # App entry point
+  data/checklist_data.dart       # The full checklist (source of truth)
+  models/
+    checklist_item.dart          # Item model (label, note, header flag)
+    checklist_group.dart         # Block model (title, step, items)
+  state/
+    checklist_store.dart         # Checked state, persistence, gate logic
+    metar_notifier.dart          # Live QNH/METAR state (ChangeNotifier)
+  services/
+    metar_service.dart           # METAR fetch + parsing (http)
+  screens/checklist_screen.dart  # Main multi-page screen
+  theme/app_theme.dart           # Cream/green design system
+  widgets/
+    step_indicator.dart          # Top block navigator
+    block_view.dart              # One block (title + items, scrollable)
+    item_row.dart                # Single checklist item (tap to check)
+    progress_bar.dart            # Per/general progress
+    takeoff_gate.dart            # The locked take-off/landing gate
 test/
-  checklist_data_test.dart   — unicidad de ids, bloques críticos
-  checklist_store_test.dart  — gate de despegue, toggle, reset
+  checklist_data_test.dart       # Data integrity
+  checklist_store_test.dart      # Gate + toggle + reset logic
+  metar_service_test.dart        # METAR parsing + fallback
+  screenshot_test.dart           # Golden-image README screenshot
 ```
 
-- **Estado**: `ChecklistStore` extiende `ChangeNotifier`; la UI escucha vía
-  `ListenableBuilder`. No se usa Provider para minimizar dependencias, pero la
-  lógica está aislada del widget y es 100% testeable.
-- **Persistencia**: `shared_preferences` (fire-and-forget, no bloquea la UI).
-- **El gate es pura lógica**: `store.isComplete` y `store.pendingItems` son
-  funciones puras cubiertas por tests.
+---
 
-## Requisitos
+## License & data provenance
 
-- Flutter 3.47+ / Dart 3.5+
-- Android SDK (API 33–36)
-
-## Uso
-
-```bash
-flutter pub get
-flutter test          # 9 tests
-flutter run           # ejecutar en dispositivo/emulador
-flutter build apk     # generar APK de release
-```
-
-## Nota de diseño
-
-Paleta siguiendo la preferencia de portales del usuario: fondo crema `#F5F2EE`,
-acento verde `#0C8A6D` (que además refuerza el semáforo "listo para despegar").
-Tap targets grandes para operación con guantes y lectura rápida en situación
-delicada.
+The checklist content is transcribed from the operator's training dossier
+(ULR training organisation) for personal operational use. The METAR data is
+sourced from the public VATSIM METAR service, which provides unauthenticated
+real-world aviation weather reports.
