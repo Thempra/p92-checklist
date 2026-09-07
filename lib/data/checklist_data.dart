@@ -233,7 +233,7 @@ const List<ChecklistGroup> kAircraft = [
           label: 'REGISTRO DE VUELO EN WEB',
           note: 'RELLENAR'),
       ChecklistItem(id: 'par_llaves_avion', label: 'LLAVES DEL AVIÓN', note: 'COLGAR'),
-      ChecklistItem(id: 'par_funda_pito', label: 'FUNDA PITO', note: 'PUESTA'),
+      ChecklistItem(id: 'par_funda_pito', label: 'FUNDA PITOT', note: 'PUESTA'),
       ChecklistItem(
           id: 'par_helice_horiz',
           label: 'HÉLICE EN HORIZONTAL',
