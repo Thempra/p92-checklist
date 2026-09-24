@@ -46,4 +46,4 @@ android/key.properties
 *.jks
 release-keystore.jks
 coverage/
-.dart_analysis.json
+.dart_analysis.txt
