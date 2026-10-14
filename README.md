@@ -1,6 +1,7 @@
 # Tecnam P92 Echo — Pre-flight Checklist (EC-DG4)
 
-**🌐 Product page (EN/ES): <https://thempra.github.io/p92-checklist/>**
+**🌐 Product page: <https://thempra.github.io/p92-checklist/>**
+**📲 Google Play: <https://play.google.com/store/apps/details?id=com.thempra.p92_checklist>**
 
 A **Flutter** mobile checklist app for the pre- and post-flight phases of the
 **Tecnam P92 Echo** (registration EC-DG4), faithfully transcribed from the
