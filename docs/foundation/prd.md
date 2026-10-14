@@ -29,9 +29,8 @@ Olocau/Bétera (Valencia, España). Sin multiusuario, sin cuentas.
 ## 4. Funcionalidades (inventario completo)
 
 ### F1. Checklist por bloques (fuente de verdad única)
-- **9 bloques** en orden de piloto: 1 Revisión exterior · 2 Revisión ext. planos y cola ·
-  3 Puesta en marcha · 4 Después de arrancar · 5 Rodaje · prueba de motor ·
-  6 Antes de despegar · 7 Briefing · 8 En final · 9 Parada de motor.
+- **9 bloques** en orden de piloto (Revisión exterior → … → Parada de motor);
+  tabla completa: **[Backend schema §6](backend-schema.md)** (doc canónico).
 - ~92 entradas (partidas chequeables + cabeceras no táctiles) definidas en un
   único fichero de datos; la UI se renderiza genéricamente desde el modelo.
 - **Fidelidad al dossier**: mismos títulos, mismos textos, mismas notas
@@ -64,8 +63,8 @@ Olocau/Bétera (Valencia, España). Sin multiusuario, sin cuentas.
 - Modal con los parámetros del motor como consulta rápida durante la prueba de motor.
 
 ### F8. Tests automatizados
-- 20 tests: integridad de datos (ids únicos, 9 bloques en orden, conteos),
-  lógica de la puerta (despegue/aterrizaje/reset) y parseo de METAR/QNH.
+- Suite que cubre integridad de datos, lógica de la puerta (despegue/aterrizaje/
+  reset) y parseo de METAR/QNH. Detalle por suite: **[Testing](../testing.md)** (doc canónico).
 
 ## 5. Fuera de alcance (explícito)
 - Sync en la nube, backend remoto o multi-dispositivo.

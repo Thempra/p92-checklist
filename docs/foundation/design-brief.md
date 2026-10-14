@@ -54,12 +54,14 @@ morados estridentes). Diseñado para un solo pulgar y luz solar.
   bloques marca la jerarquía (estilo casa: moderno-formal sobrio).
 
 **ALTÍMETRO (partida especial):** label normal + chip inline verde pálido
-`LEBT 1021 hPa` cuando hay dato vivo; ausente si no.
+`LEBT 1021 hPa` cuando hay dato vivo; ausente si no (comportamiento de datos:
+[flow.md §3](flow.md)).
 
 **Modal motor:** fondo oscurecido 40 %, tarjeta centrada, filas parámetro→valor
-con separadores crema, números monoespaciados.
+con separadores crema, números monoespaciados (disparo y cierre: [flow.md §4](flow.md)).
 
-**Dialog reset:** ≤ 3 líneas, botón destructivo a la derecha.
+**Dialog reset:** ≤ 3 líneas, botón destructivo a la derecha (texto y acción:
+[flow.md §4](flow.md)).
 
 ## 6. Reglas de accesibilidad / cabina
 - Contraste texto/fondo ≥ 4.5:1 (verde sobre crema solo para elementos grandes).

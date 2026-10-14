@@ -13,7 +13,7 @@ sobre esto sin adivinar.
 | Estado | **`ChangeNotifier` nativo** (sin Riverpod/Bloc) | Superficie de estado mínima; menos dependencias = menos riesgo en app de seguridad |
 | Persistencia | **`shared_preferences` ^2.2.0** | Solo necesita un set de ids + flag de fase; sin DB |
 | HTTP | **`http` ^1.6.0** | Un único GET textual; sin dio/retrofit |
-| Tests | `flutter_test` | 20 tests, 3 suites |
+| Tests | `flutter_test` | Suites: ver `docs/testing.md` |
 | Lint | `flutter_lints` + `analysis_options.yaml` | CI |
 
 ## 2. Arquitectura (capas)

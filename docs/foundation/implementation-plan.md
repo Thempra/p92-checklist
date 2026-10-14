@@ -13,7 +13,7 @@ este plan queda como registro y como playbook para v2/otros checklists.
       ✔ `flutter analyze` sin errores; `flutter test` verde con 0 tests.
 - [x] S1.2 Modelos `ChecklistItem` / `ChecklistGroup` (inmutables).
       ✔ Compilan; `checkableCount` derivado, no duplicado.
-- [x] S1.3 Transcribir el dossier a `checklist_data.dart`: 9 bloques, ~92 items,
+- [x] S1.3 Transcribir el dossier a `checklist_data.dart`: 9 bloques completos
       ids estables `bloque_item`, notas ON/OFF/CHK.
       ✔ Test: ids únicos, 9 bloques en orden de piloto, conteo chequeables. **Fidelidad
       1:1 con el dossier; nada inventado ni reordenado.**
