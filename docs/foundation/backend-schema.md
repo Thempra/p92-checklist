@@ -59,21 +59,38 @@ authorizeTakeoff, reset, load`.
 
 ## 5. Flujo de datos externo (único): METAR → QNH
 
-```
-MetarNotifier.load()
-  → por ICAO en [LEBT, LEVC, LEAL] (orden distancia):
-      GET https://metar.vatsim.net/metar.php?id=<ICAO>   (sin auth, HTTPS)
-      200 → regex \bQ(\d{3,4})\b → qnh hPa
-      primer éxito gana (aeropuerto alcanzable más cercano)
-  → AltimeterResult{icao, name, qnh, metar?, fromLive}
-  → UI: chip "LEBT 1021 hPa" en la partida ALTÍMETRO
-todo falla → default LEBT fromLive=false / sin chip (fail-closed)
-```
+Decisión: un fetch por arranque + reintento manual, candidatos LEBT→LEVC→LEAL,
+fail-closed (sin valor real, sin chip). Cliente HTTP inyectable para tests.
+Implementación canónica (regex Q-group, `AltimeterResult`, timeout, permisos):
+**[Live METAR / Altimeter](../metar.md)**.
 
-Cadencia: un fetch por arranque de app + reintento manual; sin polling agresivo
-(ritmo conservador por preferencia de casa). Cliente HTTP inyectable para tests.
+## 6. Tabla de bloques e items especiales (detalle del dominio)
 
-## 6. Claves cifradas / secretos
+| # | Title (UI) | shortTitle | Fase |
+|---|---|---|---|
+| 1 | REVISIÓN EXTERIOR | Exterior | Pre-despegue |
+| 2 | REVISIÓN EXT. · PLANOS Y COLA | Planos | Pre-despegue |
+| 3 | PUESTA EN MARCHA | Arranque | Pre-despegue |
+| 4 | DESPUÉS DE ARRANCAR | Post-arranque | Pre-despegue |
+| 5 | RODAJE · PRUEBA DE MOTOR | Rodaje | Pre-despegue |
+| 6 | ANTES DE DESPEGAR | Pre-despegue | Pre-despegue |
+| 7 | BRIEFING | Briefing | Pre-despegue |
+| 8 | EN FINAL | Final | Aterrizaje |
+| 9 | PARADA DE MOTOR | Parada | Aterrizaje |
+
+Items con comportamiento especial:
+- **`pem_altimetro`** — su nota se sustituye por el QNH vivo (`LEBT 1021 hPa`);
+  sin dato vivo, sin nota (fail-closed).
+- **`pem_radio`** — nota con las VHF: `OLOCAU 130,125 · BÉTERA 126,750 ·
+  VALENCIA 120,100`.
+
+Helpers globales en `checklist_data.dart`: `kAllCheckableItems()`,
+`kTotalCheckableItems` (actualmente 84 chequeables), `kTakeoffLastBlockIndex` (=6,
+bloque 7 BRIEFING). Garantías de integridad exigidas por tests: ids únicos
+globales, exactamente 9 bloques en orden de piloto, bloque 2 = planos+cola,
+conteo de chequeables consistente.
+
+## 7. Claves cifradas / secretos
 - Keystore Android de firma: `release-keystore.jks` + credenciales en
   `~/.p92_keystore` (fuera del repo; nunca subir storepass/keypass).
 - La app en sí no almacena secretos. `allowBackup=false`, sin cleartext.

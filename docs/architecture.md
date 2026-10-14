@@ -44,7 +44,8 @@ Screens never mutate the data file; they mutate *state* and let
   - `kAllCheckableItems()` → flattened list of every tappable item,
   - `kTotalCheckableItems` → its length,
   - `kTakeoffLastBlockIndex` (value `6`) → 0-based index of block 7
-    (ASCENSO), i.e. the last pre-take-off block.
+    (BRIEFING), i.e. the last pre-take-off block. Block table:
+    [Backend schema §6](foundation/backend-schema.md).
 
 - **`lib/models/checklist_item.dart`** — a single checklist line: `id`,
   `label`, optional `note`, and an `isHeader` flag for section headers that
@@ -78,7 +79,7 @@ Screens never mutate the data file; they mutate *state* and let
 
 - **`lib/theme/app_theme.dart`** — `AppColors` constants and `buildAppTheme()`
   producing a `ThemeData` with the cream background and green accent. See
-  [UI & theming](ui.md).
+  [Design brief](foundation/design-brief.md).
 
 ### Widgets & screens
 

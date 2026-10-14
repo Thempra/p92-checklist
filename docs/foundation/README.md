@@ -1,17 +1,28 @@
-# Documentación fundacional — p92-checklist
+# Documentación — mapa y regla de autoría única
 
-Los 6 documentos de arranque del proyecto. Se actualizan **en el mismo commit**
-que el cambio que los afecta; nunca decisiones en silencio.
+**Regla anti-duplicidad:** cada dato vive en **un solo documento canónico**;
+los demás enlazan, nunca copian. Si un dato cambia, se edita su doc canónico y
+nada más. Cambios de decisión se hacen en el MISMO commit que el código.
 
-| # | Doc | Qué decide |
+## Capa 1 — Fundaciones (decisiones) · `docs/foundation/`
+
+| # | Doc | Autoría exclusiva (dueño de estos datos) |
 |---|---|---|
-| 1 | [prd.md](prd.md) | Qué producto es: funcionalidades, alcance, regla de seguridad |
-| 2 | [trd.md](trd.md) | Stack, arquitectura, APIs, build/CI |
-| 3 | [flow.md](flow.md) | Fases, navegación, qué hace cada botón |
-| 4 | [design-brief.md](design-brief.md) | Paleta, tipografía, componentes, pantallas |
-| 5 | [backend-schema.md](backend-schema.md) | Modelo de datos, persistencia, flujo METAR |
-| 6 | [implementation-plan.md](implementation-plan.md) | Secuencia de construcción con criterios de aceptación |
+| 1 | [prd.md](prd.md) | Idea, funcionalidades, alcance in/out, criterios de éxito |
+| 2 | [trd.md](trd.md) | Stack y versiones, APIs (qué endpoint), build/release/CI, restricciones |
+| 3 | [flow.md](flow.md) | Fases, navegación, comportamiento exacto de cada botón |
+| 4 | [design-brief.md](design-brief.md) | **Paleta/tabla de colores canónica**, tipografía, componentes, aspecto de pantallas |
+| 5 | [backend-schema.md](backend-schema.md) | **Modelo de datos y entidades**, **claves de persistencia**, flujo METAR (decisión), tabla de bloques, integridad |
+| 6 | [implementation-plan.md](implementation-plan.md) | Secuencia de construcción + criterios de aceptación |
 
-> Nota: estos docs se redactaron a posteriori sobre la v1 ya construida;
-> documentan el estado real verificado contra el código (nunca inventado).
-> Docs técnicos ampliados viven en `docs/../` (architecture, data, metar, ui, testing).
+## Capa 2 — Referencia de implementación (cómo quedó) · `docs/`
+
+| Doc | Autoría exclusiva |
+|---|---|
+| [architecture.md](../architecture.md) | Responsabilidades fichero-a-fichero, diagrama de capas, data flow |
+| [metar.md](../metar.md) | Regex Q-group, `AltimeterResult`, timeout, permisos Android |
+| [testing.md](../testing.md) | Suites de tests, qué cubre cada una, goldens |
+
+> `overview.md`, `data.md` y `ui.md` se **eliminaron**: su contenido (propósito,
+> modelo de datos, paleta/pantallas) estaba duplicado de los fundacionales.
+> Punto de entrada general: `README.md` de la raíz.

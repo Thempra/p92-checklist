@@ -18,14 +18,9 @@ sobre esto sin adivinar.
 
 ## 2. Arquitectura (capas)
 
-```
-Screens    lib/screens/checklist_screen.dart (orquesta todo)
-Widgets    lib/widgets/{step_indicator, block_view, item_row, progress_bar, takeoff_gate}
-State      lib/state/{checklist_store, metar_notifier}   ChangeNotifier
-Services   lib/services/metar_service.dart               I/O externo
-Domain     lib/models/*, lib/data/checklist_data.dart    source of truth
-Theme      lib/theme/app_theme.dart                      design tokens
-```
+`Screens → Widgets → State (ChangeNotifier) → Services → Domain/Data → Theme`,
+sin framework de estado de terceros. Diagrama y responsabilidades
+fichero-a-fichero: **[Architecture](../architecture.md)** (doc canónico).
 
 Regla: las pantallas nunca hardcodean partidas; todo se renderiza desde
 `checklist_data.dart`. Los services se inyectan con cliente HTTP configurable
@@ -35,19 +30,15 @@ para testear sin red.
 
 | API | Endpoint | Auth | Notas |
 |---|---|---|---|
-| METAR VATSIM | `GET https://metar.vatsim.net/metar.php?id=<ICAO>` | ninguna | Devuelve METAR crudo de 1 línea. Parseo del grupo QNH con `\bQ(\d{3,4})\b`. |
+| METAR VATSIM | `GET https://metar.vatsim.net/metar.php?id=<ICAO>` | ninguna | Devuelve METAR crudo de 1 línea. |
 
-Candidatos ordenados por distancia a la base: `LEBT` (Bétera, 2 km) → `LEVC`
-(Valencia, 25 km) → `LEAL` (Alicante, 135 km). Se usa el primero alcanzable.
-Timeout corto; en fallo, valor por defecto LEBT marcado `fromLive=false` o
-ocultar (fail-closed).
+Decisión de producto: candidatos `LEBT → LEVC → LEAL` por cercanía, fail-closed.
+Parseo, fallback y plumbing de red en detalle: **[Live METAR](../metar.md)** (doc canónico).
 
-## 4. Claves de persistencia (SharedPreferences)
+## 4. Persistencia
 
-| Clave | Tipo | Contenido |
-|---|---|---|
-| `checked_ids` | StringList | ids de partidas marcadas |
-| `took_off` | bool | fase: ya se autorizó el despegue |
+Dos claves en SharedPreferences (`checked_ids`, `took_off`). Esquema completo,
+claves y tolerancia a fallos: **[Backend schema](backend-schema.md)** §3 (doc canónico).
 
 ## 5. Build, release y CI
 

@@ -4,7 +4,7 @@ Identidad visual en `lib/theme/app_theme.dart`. Estilo: **cálido, legible en
 cabina, moderno sobrio** — fondo crema con acento verde (sin azul frío, sin
 morados estridentes). Diseñado para un solo pulgar y luz solar.
 
-## 1. Paleta (`AppColors`)
+## 1. Paleta (`AppColors`) — tabla canónica
 
 | Token | Hex | Uso |
 |---|---|---|

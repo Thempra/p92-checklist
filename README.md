@@ -77,16 +77,27 @@ The release APK is written to
 
 ## Documentation
 
-For the full picture, see the in-depth guides under [`docs/`](docs/):
+Product decisions live in the six foundation docs; implementation detail lives
+beside them. Each topic has exactly one canonical doc (no duplication).
 
-| Document                                  | Covers |
-|-------------------------------------------|--------|
-| [**Overview & Goal**](docs/overview.md)    | Purpose, pilot use-case, product goals |
-| [**Architecture**](docs/architecture.md)  | Folder layout, layers, data flow, state, screens |
-| [**Flight data model**](docs/data.md)      | The 9 blocks, items, headers, notes, checklist structure |
-| [**Live METAR / altimeter**](docs/metar.md)| How the QNH is fetched, fallback logic, API used |
-| [**UI & theming**](docs/ui.md)             | Screens, widgets, the cream/green design system |
-| [**Testing**](docs/testing.md)             | What is tested and how |
+**Foundation — decisions ([`docs/foundation/`](docs/foundation/)):**
+
+| Document | Covers |
+|----------|--------|
+| [**PRD**](docs/foundation/prd.md) | Idea, functionalities, scope, success criteria |
+| [**TRD**](docs/foundation/trd.md) | Stack, tools, APIs, build/CI decisions |
+| [**App flow**](docs/foundation/flow.md) | Phases, navigation, button-by-button behaviour |
+| [**Design brief**](docs/foundation/design-brief.md) | Palette (canonical), typography, components, screens |
+| [**Backend schema**](docs/foundation/backend-schema.md) | Data model, persistence keys, METAR flow, block table |
+| [**Implementation plan**](docs/foundation/implementation-plan.md) | Step-by-step build sequence w/ acceptance criteria |
+
+**Implementation reference ([`docs/`](docs/)):**
+
+| Document | Covers |
+|----------|--------|
+| [**Architecture**](docs/architecture.md) | File-by-file layers, data flow, state |
+| [**Live METAR / altimeter**](docs/metar.md) | QNH parsing, fallback, network plumbing |
+| [**Testing**](docs/testing.md) | Suites, what is tested and how |
 
 ---
 

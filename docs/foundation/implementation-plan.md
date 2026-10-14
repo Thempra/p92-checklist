@@ -50,8 +50,8 @@ este plan queda como registro y como playbook para v2/otros checklists.
       ✔ Arranque sin red muestra checklist inmediatamente, sin chip.
 
 ## Fase 5 — Calidad y release
-- [x] S5.1 Suite completa (3 suites / 20 tests) + `flutter analyze` limpio.
-      ✔ CI en verde.
+- [x] S5.1 Suite completa + `flutter analyze` limpio.
+      ✔ CI en verde. Suites y criterios por test: **[Testing](../testing.md)** (doc canónico).
 - [x] S5.2 endurecido Android: `allowBackup=false`, sin cleartext.
       ✔ Escáneres de seguridad → DefectDojo sin hallazgos críticos.
 - [x] S5.3 SonarQube (sast.thempra.net) + coverage.
